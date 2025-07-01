@@ -51,24 +51,21 @@ def fillXs(board, i, j):
 
     return changes
 
-def incrementPos(pos):  # funky
-    if pos == (X_LEN - 1, Y_LEN - 1):
-        return None
-    if pos[1] == Y_LEN - 1:
-        return (pos[0] + 1, 0)
-    else:
-        return (pos[0], pos[1] + 1)
+# def incrementPos(pos):
+#     (x, y) = pos
+#     y += 1
+#     if y == Y_LEN:
+#         x += 1
+#         y = 0
+#     return (x, y) if x < X_LEN else None
 
 def getValidSquares(board):
-    pos = (0, -1)  # getNextValidSquare assumes "current" square is already included, so start off the board so (0,0) isn't missed
-    positions = []
-
-    while (pos := incrementPos(pos)) != None:
-        # check if pos is valid
-        if board[pos[0]][pos[1]] == 6: 
-            positions.append(pos)
-    
-    return positions
+    return [
+        (x, y)
+        for x in range(X_LEN)
+        for y in range(Y_LEN)
+        if board[x][y] == 6
+    ]
 
 def fillValidSquare(board, pos):
     (i0, j0) = pos
@@ -141,6 +138,8 @@ def track(board):
     # call track
     # if no valid square, undo what we've just done and be sad (lasiest way to do this is deepcopy, so that's exactly what we'll do)
 
+    xChanges = {}
+
     for square in getValidSquares(board):
         changes = fillValidSquare(board, square)
         out = track(board)
@@ -149,6 +148,12 @@ def track(board):
         else:
             for (pos, prevVal) in changes.items():
                 board[pos[0]][pos[1]] = prevVal
+
+        xChanges[square] = 6
+        board[square[0]][square[1]] = 9
+
+    for (pos, prevVal) in xChanges.items():
+        board[pos[0]][pos[1]] = prevVal
 
     # check if we're done!
     for i in range(X_LEN):
