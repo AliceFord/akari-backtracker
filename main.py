@@ -51,15 +51,7 @@ def fillXs(board, i, j):
 
     return changes
 
-# def incrementPos(pos):
-#     (x, y) = pos
-#     y += 1
-#     if y == Y_LEN:
-#         x += 1
-#         y = 0
-#     return (x, y) if x < X_LEN else None
-
-def getValidSquares(board):
+def getValidSquares(board):  # IDEA: different sort? if we can find a better total order we should be happy
     return [
         (x, y)
         for x in range(X_LEN)
@@ -102,32 +94,32 @@ def fillValidSquare(board, pos):
         changes[(i0-1, j0)] = board[i0-1][j0]
         board[i0-1][j0] -= 1
         if board[i0-1][j0] == 0:
-            changes += fillXs(board, i0-1, j0)
+            changes |= fillXs(board, i0-1, j0)
     if i0 + 1 < X_LEN and board[i0+1][j0] < 5: 
         changes[(i0+1, j0)] = board[i0+1][j0]
         board[i0+1][j0] -= 1
         if board[i0+1][j0] == 0:
-            changes += fillXs(board, i0+1, j0)
+            changes |= fillXs(board, i0+1, j0)
     if j0 - 1 >= 0 and board[i0][j0-1] < 5: 
         changes[(i0, j0-1)] = board[i0][j0-1]
         board[i0][j0-1] -= 1
         if board[i0][j0-1] == 0:
-            changes += fillXs(board, i0, j0-1)
+            changes |= fillXs(board, i0, j0-1)
     if j0 + 1 < Y_LEN and board[i0][j0+1] < 5: 
         changes[(i0, j0+1)] = board[i0][j0+1]
         board[i0][j0+1] -= 1
         if board[i0][j0+1] == 0:
-            changes += fillXs(board, i0, j0+1)
+            changes |= fillXs(board, i0, j0+1)
 
     return changes
 
 TEMP_K = 0
 
 def track(board):
-    # global TEMP_K
-    # TEMP_K += 1
-    # if TEMP_K >= 5000:
-    #     quit()
+    global TEMP_K
+    TEMP_K += 1
+    if TEMP_K >= 100000:
+        quit()
 
     # printBoard(board)
     # print()
@@ -158,7 +150,7 @@ def track(board):
     # check if we're done!
     for i in range(X_LEN):
         for j in range(Y_LEN):
-            if board[i][j] == 6 or board[i][j] == 9:
+            if board[i][j] == 6 or board[i][j] == 9 or 1 <= board[i][j] <= 4:
                 return False
 
     return board
@@ -167,23 +159,31 @@ def track(board):
 X_LEN = 0
 Y_LEN = 0
 
-def main():
+def solve(board):
     global X_LEN, Y_LEN
-    board = []
-    for _ in range(10):
-        board.append([6] * 10)
-
     X_LEN = len(board)
     Y_LEN = len(board[0])
 
-    for zero in [(0,1),(0,3),(0,6),(0,7),(2,8),(3,0),(3,3),(3,7),(4,6),(5,1),(6,3),(6,8),(7,5),(8,1),(8,7)]:  # (x,y)
-        board[zero[1]][zero[0]] = 0  # (y,x)
-
+    printBoard(board)
+    print("-----")
+    
     initialXFill(board)
+    printBoard(board)
+    quit()
 
     board = track(board)
 
     printBoard(board)
+
+def main():
+    board = []
+    for _ in range(10):
+        board.append([6] * 10)
+
+    # for zero in [(0,1),(0,3),(0,6),(0,7),(2,8),(3,0),(3,3),(3,7),(4,6),(5,1),(6,3),(6,8),(7,5),(8,1),(8,7)]:  # (x,y)
+    #     board[zero[1]][zero[0]] = 0  # (y,x)
+
+    solve([[5, 5, 1, 6, 6, 6, 5, 6, 6, 6], [5, 6, 6, 6, 2, 6, 6, 6, 6, 6], [6, 6, 6, 6, 5, 6, 6, 0, 6, 6], [6, 2, 6, 6, 6, 6, 6, 6, 6, 0], [6, 6, 6, 6, 5, 6, 6, 6, 6, 6], [0, 6, 0, 6, 0, 5, 6, 5, 2, 6], [6, 6, 6, 6, 6, 6, 6, 6, 6, 6], [5, 6, 1, 6, 5, 6, 6, 6, 6, 5], [6, 6, 6, 6, 6, 6, 3, 6, 6, 5], [6, 6, 5, 6, 2, 6, 6, 6, 5, 5]])
 
 if __name__ == "__main__":
     main()
