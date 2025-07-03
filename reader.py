@@ -119,7 +119,7 @@ def mainFn():
     X = 10
     Y = 10
 
-    im = Image.open("archive/170.png")
+    im = Image.open("archive/179.png")
     borders = findRawBorders(im)
     im = im.crop(borders)
     width, height = im.size
@@ -132,8 +132,8 @@ def mainFn():
         for y in range(Y):
             grid[x].append(identifySquare(im.crop((y * (width // X), x * (height // Y), (y+1) * (width // X), (x+1) * (height // Y)))))
 
-    print(grid)
-    # main.solve(grid)    
+    # print(grid)
+    main.solve(grid)    
 
 
 if __name__ == "__main__":
